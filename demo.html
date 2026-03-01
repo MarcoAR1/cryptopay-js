@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CryptoPay Checkout — Live Demo</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: #0a0a0f;
+      color: #f0f0f5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    h1 { font-size: 28px; margin-bottom: 8px; }
+    .subtitle { font-size: 14px; color: #9494a8; margin-bottom: 32px; }
+    .demo-container { max-width: 480px; width: 100%; }
+
+    .examples {
+      margin-top: 48px;
+      max-width: 600px;
+      width: 100%;
+    }
+    .examples h2 {
+      font-size: 18px;
+      margin-bottom: 16px;
+      color: #a29bfe;
+    }
+    pre {
+      background: #16161f;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 20px;
+      overflow-x: auto;
+      font-size: 13px;
+      line-height: 1.6;
+      color: #c8c8d8;
+    }
+    code { font-family: 'JetBrains Mono', 'SF Mono', monospace; }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <h1>⟐ CryptoPay Checkout</h1>
+  <p class="subtitle">Embeddable crypto payment widget — 16KB, zero deps</p>
+
+  <!-- Live Widget Demo -->
+  <div class="demo-container">
+    <div id="cryptopay-button"
+         data-api-key="cpk_demo_test123"
+         data-amount="25.00"
+         data-currency="USDT"
+         data-order-id="demo_001"
+         data-theme="dark">
+    </div>
+  </div>
+
+  <!-- Integration Example -->
+  <div class="examples">
+    <h2>Integration</h2>
+    <pre><code>&lt;script src="checkout.js"&gt;&lt;/script&gt;
+
+&lt;div id="cryptopay-button"
+     data-api-key="YOUR_KEY"
+     data-amount="25.00"
+     data-currency="USDT"&gt;
+&lt;/div&gt;</code></pre>
+  </div>
+
+  <script src="dist/checkout.js"></script>
+</body>
+</html>

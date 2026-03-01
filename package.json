@@ -1,0 +1,29 @@
+{
+    "name": "cryptopay-js",
+    "version": "1.0.0",
+    "description": "CryptoPay Checkout Widget — Accept crypto payments in minutes",
+    "main": "dist/checkout.js",
+    "module": "dist/checkout.esm.js",
+    "types": "dist/index.d.ts",
+    "files": [
+        "dist/",
+        "README.md",
+        "LICENSE"
+    ],
+    "keywords": [
+        "crypto",
+        "payment",
+        "widget",
+        "checkout",
+        "ethereum",
+        "usdt",
+        "web3",
+        "blockchain"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/MarcoAR1/cryptopay-js.git"
+    },
+    "author": "MarcoAR1",
+    "license": "MIT"
+}
