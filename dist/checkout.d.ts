@@ -45,6 +45,14 @@ export declare class CryptoPayCheckout {
     private latestPayment;
     private gaslessCapabilities;
     private t;
+    /**
+     * Deprecated legacy v1 initialization. Fails explicitly before any funds or operations.
+     */
+    static init(_config?: any): never;
+    /**
+     * Deprecated legacy v1 modal opener. Fails explicitly before any funds or operations.
+     */
+    static open(_config?: any): never;
     constructor(config: CheckoutConfig);
     /**
      * Mounts the checkout widget into the specified container element or selector.

@@ -45,3 +45,8 @@ export declare class AmbiguousExecutionError extends CryptoPayCoreError {
 export declare class ContractExecutionRevertedError extends CryptoPayCoreError {
     constructor(reason?: string);
 }
+export declare class IncompatibleVersionError extends CryptoPayCoreError {
+    expectedVersion: string;
+    receivedVersion?: string | undefined;
+    constructor(message: string, expectedVersion?: string, receivedVersion?: string | undefined);
+}

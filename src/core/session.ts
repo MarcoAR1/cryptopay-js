@@ -10,6 +10,7 @@ import {
   SessionExpiredError,
   SessionCancelledError,
   CryptoPayCoreError,
+  IncompatibleVersionError,
 } from './errors';
 
 export interface SessionSnapshot {
@@ -266,6 +267,13 @@ export class HeadlessPaymentSession {
     }
     if (!raw.paymentAddress || !raw.chainId) {
       throw new InvalidResponseError('Missing payment routing fields (paymentAddress / chainId)');
+    }
+    if (raw.version && (String(raw.version).startsWith('1') || String(raw.version) === 'v1')) {
+      throw new IncompatibleVersionError(
+        `Session is on protocol version ${raw.version}, but cryptopay-js v2 requires protocol v2+`,
+        'v2',
+        String(raw.version)
+      );
     }
     if (!raw.status) {
       throw new InvalidResponseError('Missing status in response');

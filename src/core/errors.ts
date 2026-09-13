@@ -92,3 +92,14 @@ export class ContractExecutionRevertedError extends CryptoPayCoreError {
   }
 }
 
+export class IncompatibleVersionError extends CryptoPayCoreError {
+  constructor(
+    message: string,
+    public expectedVersion = 'v2',
+    public receivedVersion?: string
+  ) {
+    super(message, 'INCOMPATIBLE_VERSION');
+    this.name = 'IncompatibleVersionError';
+  }
+}
+

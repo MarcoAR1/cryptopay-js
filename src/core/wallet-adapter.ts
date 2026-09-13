@@ -4,6 +4,7 @@ import {
   ChainSwitchRejectedError,
   NetworkMismatchError,
   PaymentPreparationInvalidatedError,
+  IncompatibleVersionError,
 } from './errors';
 
 export interface EIP1193Provider {
@@ -395,7 +396,19 @@ export class WalletPaymentManager {
     recipientAddress: string;
     amountUnits: string;
     chainId: number;
+    protocolVersion?: string | number;
   }): PreparedPayment {
+    if (params.protocolVersion !== undefined) {
+      const v = String(params.protocolVersion);
+      if (v === '1' || v.startsWith('1.') || v === 'v1') {
+        throw new IncompatibleVersionError(
+          `Protocol version ${v} is incompatible with cryptopay-js v2. Upgrade session or gateway before broadcasting funds.`,
+          'v2',
+          v
+        );
+      }
+    }
+
     if (!this.connectedState) {
       throw new Error('Wallet not connected');
     }

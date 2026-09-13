@@ -12,6 +12,7 @@ import {
   getTranslations,
   formatAmountDisplay,
 } from './i18n';
+import { IncompatibleVersionError } from './core/errors';
 import './styles/widget.css';
 
 export interface CheckoutConfig {
@@ -85,7 +86,43 @@ export class CryptoPayCheckout {
   private gaslessCapabilities: GaslessCapabilitiesResponse | null = null;
   private t: TranslationCatalog;
 
+  /**
+   * Deprecated legacy v1 initialization. Fails explicitly before any funds or operations.
+   */
+  static init(_config?: any): never {
+    throw new IncompatibleVersionError(
+      'CryptoPayCheckout.init() is deprecated and disabled in v2+. Client-side API key and amount configuration has been removed. Use server-created sessions with CryptoPay.createCheckout({ baseUrl, paymentId, checkoutToken }).',
+      'v2',
+      'v1'
+    );
+  }
+
+  /**
+   * Deprecated legacy v1 modal opener. Fails explicitly before any funds or operations.
+   */
+  static open(_config?: any): never {
+    throw new IncompatibleVersionError(
+      'CryptoPayCheckout.open() is deprecated and disabled in v2+. Use server-created sessions with CryptoPay.openModal({ baseUrl, paymentId, checkoutToken }).',
+      'v2',
+      'v1'
+    );
+  }
+
   constructor(private config: CheckoutConfig) {
+    if ((config as any).apiKey || (config as any).api_key || (config as any).secretKey) {
+      throw new IncompatibleVersionError(
+        'Client-side API keys are forbidden in v2+. Merchant API keys must remain strictly on the backend. Sessions must be created exclusively by the merchant server.',
+        'v2',
+        'v1'
+      );
+    }
+    if ((config as any).amount !== undefined && !config.checkoutToken) {
+      throw new IncompatibleVersionError(
+        'Client-side amount configuration is deprecated in v2+. Payment amounts are fixed authoritatively on the server.',
+        'v2',
+        'v1'
+      );
+    }
     if (!config.paymentId || !config.checkoutToken) {
       throw new Error('A server-created checkout session is required');
     }
@@ -102,6 +139,9 @@ export class CryptoPayCheckout {
   mount(target: string | HTMLElement): void {
     if (this.isDestroyed) {
       throw new Error('Cannot mount a destroyed checkout widget');
+    }
+    if (typeof document === 'undefined') {
+      throw new Error('DOM document is not available in the current environment. CryptoPayCheckout.mount() requires a browser environment.');
     }
     this.unmount();
 

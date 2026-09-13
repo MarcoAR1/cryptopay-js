@@ -114,6 +114,7 @@ export declare class WalletPaymentManager {
         recipientAddress: string;
         amountUnits: string;
         chainId: number;
+        protocolVersion?: string | number;
     }): PreparedPayment;
     /**
      * Invalidates any existing payment preparation state
