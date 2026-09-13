@@ -1,4 +1,4 @@
-import { ClientConfig, CreatePaymentParams, PaymentResponse, ListPaymentsParams, ListPaymentsResponse, QuoteResponse } from './types';
+import { ClientConfig, CreatePaymentParams, PaymentResponse, ListPaymentsParams, ListPaymentsResponse, QuoteResponse, RequestWithdrawalParams, WithdrawalResponse } from './types';
 export declare class CryptoPayNodeClient {
     private apiKey;
     private baseUrl;
@@ -18,4 +18,6 @@ export declare class CryptoPayNodeClient {
     cancelPayment(paymentId: string, reason?: string, signal?: AbortSignal): Promise<PaymentResponse>;
     renewPayment(paymentId: string, signal?: AbortSignal): Promise<PaymentResponse>;
     getQuote(paymentId: string, signal?: AbortSignal): Promise<QuoteResponse>;
+    requestWithdrawal(params: RequestWithdrawalParams, signal?: AbortSignal): Promise<WithdrawalResponse>;
+    getWithdrawal(withdrawalId: string, signal?: AbortSignal): Promise<WithdrawalResponse>;
 }

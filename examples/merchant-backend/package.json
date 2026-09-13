@@ -1,0 +1,13 @@
+{
+  "name": "cryptopay-merchant-backend-example",
+  "version": "1.0.0",
+  "description": "Example merchant backend integrating CryptoPay Node SDK and Webhook Verifier",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node test.js"
+  },
+  "keywords": ["cryptopay", "example", "merchant", "webhooks"],
+  "author": "CryptoPay",
+  "license": "MIT"
+}

@@ -5,6 +5,8 @@ import {
   ListPaymentsParams,
   ListPaymentsResponse,
   QuoteResponse,
+  RequestWithdrawalParams,
+  WithdrawalResponse,
 } from './types';
 import {
   CryptoPayNodeError,
@@ -207,6 +209,20 @@ export class CryptoPayNodeClient {
 
   async getQuote(paymentId: string, signal?: AbortSignal): Promise<QuoteResponse> {
     return this.request<QuoteResponse>('GET', `/v1/checkout/${encodeURIComponent(paymentId)}/quote`, {
+      signal,
+    });
+  }
+
+  async requestWithdrawal(params: RequestWithdrawalParams, signal?: AbortSignal): Promise<WithdrawalResponse> {
+    return this.request<WithdrawalResponse>('POST', '/v1/withdrawals', {
+      body: params,
+      idempotencyKey: params.idempotencyKey,
+      signal,
+    });
+  }
+
+  async getWithdrawal(withdrawalId: string, signal?: AbortSignal): Promise<WithdrawalResponse> {
+    return this.request<WithdrawalResponse>('GET', `/v1/withdrawals/${encodeURIComponent(withdrawalId)}`, {
       signal,
     });
   }

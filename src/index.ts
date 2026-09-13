@@ -5,8 +5,10 @@ export { CryptoPayAPI } from './api';
 export type { PaymentResponse } from './api';
 export { detectWallets, connectWallet, executeTransaction } from './wallet';
 export { HeadlessPaymentSession } from './core/session';
+export * from './core/wallet-adapter';
 export * from './core/types';
 export * from './core/errors';
+export * from './core/contract-payment';
 export { CryptoPayNodeClient } from './node/client';
 export type { ClientConfig, CreatePaymentParams, ListPaymentsParams, ListPaymentsResponse, QuoteResponse } from './node/types';
 export {
@@ -18,4 +20,11 @@ export {
   AmbiguousTimeoutError,
   ServerError,
 } from './node/errors';
+export {
+  verifyWebhook,
+  parseSignatureHeader,
+  createWebhookMiddleware,
+  WebhookVerificationError,
+} from './node/webhook';
+export type { WebhookEventPayload, VerifyWebhookOptions } from './node/webhook';
 export function createCheckout(config: CheckoutConfig): CryptoPayCheckout { return new CryptoPayCheckout(config); }
