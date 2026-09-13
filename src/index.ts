@@ -4,4 +4,18 @@ export type { CheckoutConfig } from './checkout';
 export { CryptoPayAPI } from './api';
 export type { PaymentResponse } from './api';
 export { detectWallets, connectWallet, executeTransaction } from './wallet';
+export { HeadlessPaymentSession } from './core/session';
+export * from './core/types';
+export * from './core/errors';
+export { CryptoPayNodeClient } from './node/client';
+export type { ClientConfig, CreatePaymentParams, ListPaymentsParams, ListPaymentsResponse, QuoteResponse } from './node/types';
+export {
+  CryptoPayNodeError,
+  AuthenticationError,
+  ConflictError,
+  RateLimitError,
+  TimeoutError,
+  AmbiguousTimeoutError,
+  ServerError,
+} from './node/errors';
 export function createCheckout(config: CheckoutConfig): CryptoPayCheckout { return new CryptoPayCheckout(config); }

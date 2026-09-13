@@ -5,16 +5,16 @@
   "version": "2.0.0-rc.1",
   "files": {
     "api.d.ts": "930e7a7ff2d675113342cc789eada98de668172c4979f8f6d00fa16407d58829",
-    "checkout.cjs": "e3485eb1055bdb77c91706498face1d78691defd1a0a344fc1cb6498cec6da96",
-    "checkout.cjs.map": "f5013aa74f66d6f032cf6d28978d5bb6c324ed2a44e47df55afaa693ec08d416",
+    "checkout.cjs": "5aa16a7dd29b5e9b9edcde83018d7b74242afe2548502bbba901c5b103270311",
+    "checkout.cjs.map": "de70566865068f91f043346e829e1930c69f94411de56865835c68157a99ad49",
     "checkout.d.ts": "66769b68892db3b20807173d36c4f4d59044392ba8bbae54de993fd8255d7840",
     "checkout.esm.js": "570abee76e5b805c7eae8ed21b5c0977a9764708be1cbab60c322423d5bf680a",
     "checkout.esm.js.map": "e40bcd58a4501e5ed68f11b7a107ddc3f46d54dd6e628144976062e0ec458f5f",
-    "checkout.js": "25340b52640f96caf2b8c919e355b92e313828e4d85ca7cd4cf1564d74c34ed2",
-    "checkout.js.map": "cb189a029aa83246cdf42329d55f47d5d26907ea5ffd2ea34d6413c9694fc011",
-    "checkout.mjs": "c20f13ef7ea90c0ae2366291177389919640b0b54417ba923e26dbbb0b659c68",
-    "checkout.mjs.map": "11ccbbcc28065917a373129aa339cec63ab17dc0c5b2bcde71eede3852338e09",
-    "index.d.ts": "09827eedec6af2bf7b2243f1ddbb8392134a436c61265d817eeda395de89bf29",
+    "checkout.js": "1dfa988eaaa13cca5675582040e26cd3eeea1030d00587e938b4c562886b58ec",
+    "checkout.js.map": "239df7902e49a9bbe363cab744ef9ff9c359a7c2937073b78baf9f977bd5be22",
+    "checkout.mjs": "0e5d2c5e7aeb11b5fb4167598a19a3637da22eb3c2918b6dd378c8176978fce2",
+    "checkout.mjs.map": "60a5c5bcbb57a27bd00d5c33a0aac61cfe073a7a6a943125dbf7595194f51f9a",
+    "index.d.ts": "cbc0bc80ed2451f7945dc652740b212f2f494a35864d7f49469781d36f3e6d9e",
     "wallet.d.ts": "85af512e2c6cc44d3e51009f45af93a1bbf06fa7830cb75171490e7366ebc8e9"
   }
 }
