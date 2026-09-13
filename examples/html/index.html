@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CryptoPay — Vanilla HTML/JS Integration Demo</title>
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card-bg: rgba(26, 34, 52, 0.85);
+      --border: #2a3756;
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+    .container {
+      max-width: 960px;
+      width: 100%;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    header h1 { font-size: 2.2rem; margin-bottom: 0.5rem; color: #fff; }
+    header p { color: var(--text-muted); font-size: 1rem; }
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .toolbar-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    label { font-size: 0.85rem; color: var(--text-muted); }
+    select, input {
+      background: #111827;
+      border: 1px solid var(--border);
+      color: #fff;
+      padding: 0.4rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.9rem;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+    @media (max-width: 768px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .card h2 { font-size: 1.25rem; color: #fff; }
+    .btn {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      padding: 0.75rem 1.25rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      text-decoration: none;
+    }
+    .btn:hover { background: var(--primary-hover); }
+    .btn-secondary {
+      background: #374151;
+    }
+    .btn-secondary:hover { background: #4b5563; }
+    #checkout-container {
+      min-height: 380px;
+      border: 1px dashed var(--border);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .log-panel {
+      background: #000;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      font-family: monospace;
+      font-size: 0.8rem;
+      max-height: 250px;
+      overflow-y: auto;
+      color: #38bdf8;
+    }
+    .log-entry { margin-bottom: 0.25rem; }
+    .badge-live {
+      background: rgba(16, 185, 129, 0.2);
+      color: var(--success);
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+  </style>
+  <!-- CryptoPay Turnkey Standalone Bundle (Styles and Scripts included) -->
+  <script src="../../dist/checkout.js"></script>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <h1>⚡ CryptoPay HTML & Vanilla JS Demo</h1>
+      <p>Muestra oficial de integración empaquetada: Ready-to-Use Widget, Modal y Link Alojado.</p>
+    </header>
+
+    <section class="toolbar">
+      <div class="toolbar-group">
+        <label for="locale-select">Idioma:</label>
+        <select id="locale-select">
+          <option value="es" selected>Español (ES)</option>
+          <option value="en">English (EN)</option>
+          <option value="pt">Português (PT)</option>
+          <option value="de">Deutsch (DE)</option>
+        </select>
+      </div>
+
+      <div class="toolbar-group">
+        <label for="theme-select">Tema:</label>
+        <select id="theme-select">
+          <option value="dark" selected>Dark (Oscuro)</option>
+          <option value="light">Light (Claro)</option>
+        </select>
+      </div>
+
+      <div class="toolbar-group">
+        <label for="env-mode">Entorno:</label>
+        <select id="env-mode">
+          <option value="mock" selected>Mock Local (Simulación)</option>
+          <option value="sepolia">Sepolia Testnet (Gateway)</option>
+        </select>
+      </div>
+    </section>
+
+    <main class="grid">
+      <!-- Panel de Controles -->
+      <div class="card">
+        <h2>🛍️ Pasarela de Pago</h2>
+        <p style="font-size: 0.9rem; color: var(--text-muted);">
+          Seleccione el modo de integración deseado. Todo el bundle viene empaquetado con tipos, estilos inyectados automáticamente y lógica criptográfica.
+        </p>
+
+        <div style="background: rgba(255,255,255,0.03); padding: 1rem; border-radius: 8px;">
+          <p><strong>Producto:</strong> Pase Anual Premium</p>
+          <p><strong>Importe:</strong> 25.00 USDT</p>
+          <p><strong>Red:</strong> Sepolia (Chain ID 11155111)</p>
+          <p><strong>Gasless:</strong> Soportado vía EIP-2612 Relayer</p>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+          <button class="btn" id="btn-mount-embedded">
+            📦 Montar Widget Embebido
+          </button>
+          <button class="btn btn-secondary" id="btn-open-modal">
+            🪟 Abrir Checkout Modal
+          </button>
+          <a class="btn btn-secondary" id="btn-hosted-link" href="#" target="_blank">
+            🔗 Enlace Alojado (Hosted Link)
+          </a>
+          <button class="btn btn-secondary" id="btn-unmount" style="display: none;">
+            ❌ Desmontar Widget
+          </button>
+        </div>
+
+        <div>
+          <h3>Registro de Eventos:</h3>
+          <div class="log-panel" id="event-log">
+            <div class="log-entry">[Sistema] Listo. Seleccione una acción.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contenedor del Checkout -->
+      <div class="card">
+        <h2>📱 Vista del Checkout</h2>
+        <div id="checkout-container">
+          <p style="color: var(--text-muted); text-align: center; padding: 2rem;">
+            Haga clic en <strong>"Montar Widget Embebido"</strong> para cargar la pasarela aquí.
+          </p>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    let activeCheckout = null;
+
+    function log(msg) {
+      const el = document.getElementById('event-log');
+      const time = new Date().toLocaleTimeString();
+      el.innerHTML += `<div class="log-entry">[${time}] ${msg}</div>`;
+      el.scrollTop = el.scrollHeight;
+    }
+
+    function getSessionParams() {
+      const mode = document.getElementById('env-mode').value;
+      const locale = document.getElementById('locale-select').value;
+      const theme = document.getElementById('theme-select').value;
+
+      if (mode === 'mock') {
+        return {
+          baseUrl: 'http://localhost:3000',
+          paymentId: 'demo_mock_pay_' + Math.random().toString(36).substring(7),
+          checkoutToken: 'demo_tok_' + Math.random().toString(36).substring(7),
+          locale,
+          theme
+        };
+      } else {
+        return {
+          baseUrl: 'http://localhost:3001',
+          paymentId: 'pay_sepolia_demo',
+          checkoutToken: 'chk_tok_demo_sepolia',
+          locale,
+          theme
+        };
+      }
+    }
+
+    document.getElementById('btn-mount-embedded').onclick = () => {
+      const params = getSessionParams();
+      log(`Iniciando Checkout Embebido (Locale: ${params.locale}, Theme: ${params.theme})`);
+
+      if (activeCheckout) {
+        activeCheckout.unmount();
+      }
+
+      const container = document.getElementById('checkout-container');
+      container.innerHTML = '';
+
+      activeCheckout = CryptoPay.createCheckout({
+        baseUrl: params.baseUrl,
+        paymentId: params.paymentId,
+        checkoutToken: params.checkoutToken,
+        locale: params.locale,
+        theme: params.theme,
+        onSuccess: (data) => {
+          log(`✅ Pago Exitoso! TX Hash: ${data.txHash || 'confirmado'}`);
+        },
+        onError: (err) => {
+          log(`⚠️ Error en Checkout: ${err.message}`);
+        },
+        onStatusChange: (status) => {
+          log(`🔄 Estado cambiado a: ${status}`);
+        },
+        onCancel: () => {
+          log(`🛑 Checkout cancelado por el usuario.`);
+        }
+      });
+
+      activeCheckout.mount(container);
+      document.getElementById('btn-unmount').style.display = 'block';
+    };
+
+    document.getElementById('btn-open-modal').onclick = () => {
+      const params = getSessionParams();
+      log(`Abriendo Modal CryptoPay (Locale: ${params.locale})`);
+
+      CryptoPay.openModal({
+        baseUrl: params.baseUrl,
+        paymentId: params.paymentId,
+        checkoutToken: params.checkoutToken,
+        locale: params.locale,
+        theme: params.theme,
+        onSuccess: (data) => {
+          log(`✅ Modal: Pago Confirmado!`);
+        },
+        onError: (err) => {
+          log(`⚠️ Modal Error: ${err.message}`);
+        },
+        onStatusChange: (status) => {
+          log(`🔄 Modal Estado: ${status}`);
+        }
+      });
+    };
+
+    document.getElementById('btn-unmount').onclick = () => {
+      if (activeCheckout) {
+        activeCheckout.unmount();
+        activeCheckout = null;
+        log('Widget desmontado.');
+        document.getElementById('checkout-container').innerHTML = `
+          <p style="color: var(--text-muted); text-align: center; padding: 2rem;">
+            Widget desmontado correctamente.
+          </p>`;
+        document.getElementById('btn-unmount').style.display = 'none';
+      }
+    };
+
+    document.getElementById('locale-select').onchange = (e) => {
+      log(`Idioma seleccionado: ${e.target.value}`);
+      if (activeCheckout) {
+        document.getElementById('btn-mount-embedded').click();
+      }
+    };
+
+    document.getElementById('theme-select').onchange = (e) => {
+      log(`Tema seleccionado: ${e.target.value}`);
+      if (activeCheckout) {
+        document.getElementById('btn-mount-embedded').click();
+      }
+    };
+
+    // Actualizar link alojado
+    const params = getSessionParams();
+    document.getElementById('btn-hosted-link').href = `${params.baseUrl}/checkout/${params.paymentId}?token=${params.checkoutToken}`;
+  </script>
+</body>
+</html>

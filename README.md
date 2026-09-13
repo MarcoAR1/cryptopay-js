@@ -37,6 +37,17 @@ The QR encodes an ERC-20 transfer with chain and atomic amount. Wallet payments 
 
 No API key, order price, private key or mnemonic belongs in this widget. The checkout token is scoped to reading one attempt. Use dynamic import or a client component when mounting inside Next.js. Importing the package on a server does not mount a widget.
 
+## Integration Examples & Documentation
+
+Complete reference implementations and documentation are available in the [examples/](examples/) directory:
+
+- [Master Integration Guide](examples/INTEGRATION_GUIDE.md) — Comprehensive props, events, error codes catalog and compatibility matrix.
+- [HTML & Vanilla JS Demo](examples/html/) — Drop-in standalone script tag with embedded, modal, and hosted link flows.
+- [React Demo](examples/react/) — React 18/19 integration with ready-to-use `<CryptoPayWidget />`, headless `useCryptoPaySession()`, and modular components (`<CryptoPayQRCode />`, `<CryptoPayStatusBadge />`, `<CryptoPayWalletButton />`).
+- [Next.js App Router Demo](examples/nextjs/) — SSR-safe client components, server-side route handlers, and secure webhook verification.
+- [Generic Node.js Merchant Backend](examples/merchant-backend/) — Server-side authoritative pricing and idempotent webhook inbox.
+
 ## Migration from v1
 
 The old API-key/amount configuration and documented `CryptoPayCheckout.init/open` API are not supported by this RC. Replace them with a server-created session. CONTRACT, automatic payouts and refunds are not SDK features. The pilot supports DIRECT USDT on Sepolia; keep existing production checkout until the backend migration is accepted.
+
