@@ -1,20 +1,20 @@
 {
-  "sourceRepository": "MarcoAR1/crypto-pay",
-  "revision": "781810dd0c099b0d239771b069c52e31a236b53f",
-  "dirty": true,
+  "sourceRepository": "MarcoAR1/cryptopay-js",
+  "revision": "head",
+  "dirty": false,
   "version": "2.0.0-rc.1",
   "files": {
-    "checkout.js": "831ae78f0206006663532fe9b55dde34d4ca3ca76dadfba6b33009be31047334",
-    "checkout.js.map": "1f451ce2859836030381dd6dc19b76f3e7ef4eef9f5a4b4bf613ee298ddc1879",
-    "checkout.cjs": "8acaa75b73cd154b8563a19f51632cfd35ed99a16c7d624e04f286155507fd1d",
-    "checkout.cjs.map": "38553370100382197345ff60f77c2e308b2d872a83a4f27895cfa5f76f4fb464",
-    "checkout.mjs": "570abee76e5b805c7eae8ed21b5c0977a9764708be1cbab60c322423d5bf680a",
-    "checkout.mjs.map": "e40bcd58a4501e5ed68f11b7a107ddc3f46d54dd6e628144976062e0ec458f5f",
-    "index.d.ts": "09827eedec6af2bf7b2243f1ddbb8392134a436c61265d817eeda395de89bf29",
     "api.d.ts": "930e7a7ff2d675113342cc789eada98de668172c4979f8f6d00fa16407d58829",
+    "checkout.cjs": "e3485eb1055bdb77c91706498face1d78691defd1a0a344fc1cb6498cec6da96",
+    "checkout.cjs.map": "f5013aa74f66d6f032cf6d28978d5bb6c324ed2a44e47df55afaa693ec08d416",
     "checkout.d.ts": "66769b68892db3b20807173d36c4f4d59044392ba8bbae54de993fd8255d7840",
-    "wallet.d.ts": "85af512e2c6cc44d3e51009f45af93a1bbf06fa7830cb75171490e7366ebc8e9",
     "checkout.esm.js": "570abee76e5b805c7eae8ed21b5c0977a9764708be1cbab60c322423d5bf680a",
-    "checkout.esm.js.map": "e40bcd58a4501e5ed68f11b7a107ddc3f46d54dd6e628144976062e0ec458f5f"
+    "checkout.esm.js.map": "e40bcd58a4501e5ed68f11b7a107ddc3f46d54dd6e628144976062e0ec458f5f",
+    "checkout.js": "25340b52640f96caf2b8c919e355b92e313828e4d85ca7cd4cf1564d74c34ed2",
+    "checkout.js.map": "cb189a029aa83246cdf42329d55f47d5d26907ea5ffd2ea34d6413c9694fc011",
+    "checkout.mjs": "c20f13ef7ea90c0ae2366291177389919640b0b54417ba923e26dbbb0b659c68",
+    "checkout.mjs.map": "11ccbbcc28065917a373129aa339cec63ab17dc0c5b2bcde71eede3852338e09",
+    "index.d.ts": "09827eedec6af2bf7b2243f1ddbb8392134a436c61265d817eeda395de89bf29",
+    "wallet.d.ts": "85af512e2c6cc44d3e51009f45af93a1bbf06fa7830cb75171490e7366ebc8e9"
   }
 }

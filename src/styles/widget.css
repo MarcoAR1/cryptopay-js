@@ -1,0 +1,393 @@
+/* ═══════════════════════════════════════════════════════════
+   CryptoPay Widget — Self-contained styles
+   Dark theme, fully scoped under .cpay-root
+   ═══════════════════════════════════════════════════════════ */
+
+.cpay-root {
+  --cpay-bg: #0f0f17;
+  --cpay-card: #16161f;
+  --cpay-border: rgba(255,255,255,0.08);
+  --cpay-text: #f0f0f5;
+  --cpay-text2: #9494a8;
+  --cpay-text3: #5e5e72;
+  --cpay-accent: #6c5ce7;
+  --cpay-accent-light: #a29bfe;
+  --cpay-green: #00d68f;
+  --cpay-red: #ff6b6b;
+  --cpay-radius: 16px;
+  --cpay-font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  font-family: var(--cpay-font);
+  color: var(--cpay-text);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Light theme override */
+.cpay-root.cpay-light {
+  --cpay-bg: #ffffff;
+  --cpay-card: #f8f9fa;
+  --cpay-border: rgba(0,0,0,0.08);
+  --cpay-text: #1a1a2e;
+  --cpay-text2: #6c6c80;
+  --cpay-text3: #a0a0b0;
+}
+
+/* ─── Widget Container ────────────────────────────────── */
+.cpay-widget {
+  background: var(--cpay-bg);
+  border: 1px solid var(--cpay-border);
+  border-radius: var(--cpay-radius);
+  overflow: hidden;
+  max-width: 420px;
+  width: 100%;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+}
+
+/* ─── Header ──────────────────────────────────────────── */
+.cpay-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--cpay-border);
+}
+
+.cpay-logo {
+  font-size: 16px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--cpay-accent-light);
+}
+
+.cpay-amount {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.cpay-currency {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--cpay-text2);
+  margin-left: 4px;
+}
+
+/* ─── Body ────────────────────────────────────────────── */
+.cpay-body {
+  padding: 24px;
+  min-height: 200px;
+}
+
+/* ─── Method Selection ────────────────────────────────── */
+.cpay-methods {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cpay-method-btn {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  padding: 16px 20px;
+  background: var(--cpay-card);
+  border: 1px solid var(--cpay-border);
+  border-radius: 12px;
+  color: var(--cpay-text);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  font-family: var(--cpay-font);
+  text-align: left;
+  font-size: 14px;
+}
+
+.cpay-method-btn:hover {
+  border-color: var(--cpay-accent);
+  background: rgba(108,92,231,0.06);
+  transform: translateY(-1px);
+}
+
+.cpay-method-icon {
+  font-size: 24px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(108,92,231,0.1);
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.cpay-method-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cpay-method-info strong {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.cpay-method-info span {
+  font-size: 12px;
+  color: var(--cpay-text3);
+}
+
+.cpay-method-arrow {
+  font-size: 18px;
+  color: var(--cpay-text3);
+  flex-shrink: 0;
+}
+
+/* ─── QR View ─────────────────────────────────────────── */
+.cpay-qr-view {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.cpay-qr-container {
+  padding: 16px;
+  background: var(--cpay-card);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cpay-qr-container canvas {
+  border-radius: 8px;
+}
+
+/* ─── Address Box ─────────────────────────────────────── */
+.cpay-address-box {
+  width: 100%;
+}
+
+.cpay-address-label {
+  font-size: 13px;
+  color: var(--cpay-text2);
+  margin-bottom: 8px;
+  display: block;
+}
+
+.cpay-address-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--cpay-card);
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1px solid var(--cpay-border);
+}
+
+.cpay-address {
+  font-family: 'JetBrains Mono', 'SF Mono', monospace;
+  font-size: 11px;
+  color: var(--cpay-text2);
+  word-break: break-all;
+  flex: 1;
+}
+
+.cpay-copy-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+
+.cpay-copy-btn:hover {
+  background: rgba(108,92,231,0.15);
+}
+
+/* ─── Status / Actions ────────────────────────────────── */
+.cpay-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  font-size: 13px;
+  color: var(--cpay-text2);
+}
+
+.cpay-status-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background: var(--cpay-accent);
+  border-radius: 50%;
+  margin-right: 8px;
+  animation: cpay-pulse 1.5s infinite;
+}
+
+@keyframes cpay-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.cpay-back-btn {
+  background: none;
+  border: none;
+  color: var(--cpay-text3);
+  cursor: pointer;
+  font-size: 13px;
+  font-family: var(--cpay-font);
+  padding: 6px 12px;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.cpay-back-btn:hover {
+  color: var(--cpay-text);
+  background: rgba(255,255,255,0.05);
+}
+
+/* ─── Pending / Spinner ───────────────────────────────── */
+.cpay-pending {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 0;
+  gap: 16px;
+}
+
+.cpay-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--cpay-border);
+  border-top-color: var(--cpay-accent);
+  border-radius: 50%;
+  animation: cpay-spin 0.8s linear infinite;
+}
+
+@keyframes cpay-spin {
+  to { transform: rotate(360deg); }
+}
+
+.cpay-pending-text {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.cpay-pending-sub {
+  font-size: 13px;
+  color: var(--cpay-text3);
+  margin: 0;
+}
+
+/* ─── Success ─────────────────────────────────────────── */
+.cpay-success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 0;
+  gap: 12px;
+}
+
+.cpay-check {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(0,214,143,0.15);
+  color: var(--cpay-green);
+  font-size: 28px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: cpay-pop 0.4s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+@keyframes cpay-pop {
+  0% { transform: scale(0); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.cpay-success-text {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--cpay-green);
+  margin: 0;
+}
+
+.cpay-success-sub {
+  font-size: 13px;
+  color: var(--cpay-text3);
+  margin: 0;
+}
+
+/* ─── Error ───────────────────────────────────────────── */
+.cpay-error-view {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 0;
+  gap: 12px;
+}
+
+.cpay-error-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(255,107,107,0.15);
+  color: var(--cpay-red);
+  font-size: 28px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cpay-error-text {
+  font-size: 14px;
+  color: var(--cpay-text2);
+  margin: 0;
+  text-align: center;
+}
+
+.cpay-retry-btn {
+  margin-top: 8px;
+  padding: 10px 24px;
+  background: var(--cpay-accent);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: var(--cpay-font);
+  transition: all 0.2s;
+}
+
+.cpay-retry-btn:hover {
+  background: #7c6df0;
+  transform: translateY(-1px);
+}
+
+/* ─── Footer ──────────────────────────────────────────── */
+.cpay-footer {
+  padding: 14px 24px;
+  border-top: 1px solid var(--cpay-border);
+  text-align: center;
+}
+
+.cpay-secure {
+  font-size: 11px;
+  color: var(--cpay-text3);
+  letter-spacing: 0.02em;
+}
