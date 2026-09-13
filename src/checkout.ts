@@ -342,7 +342,8 @@ export class CryptoPayCheckout {
       body.appendChild(reviewView);
     } else {
       // PENDING
-      if (this.currentView === 'qr') {
+      const isDirect = payment.paymentMethod === 'DIRECT';
+      if (isDirect || this.currentView === 'qr') {
         if (payment.paymentAddress && payment.tokenAddress &&
             payment.paymentAddress.toLowerCase() === payment.tokenAddress.toLowerCase()) {
           this.renderError(this.t.errors.depositDestination);
@@ -355,16 +356,19 @@ export class CryptoPayCheckout {
         const topRow = document.createElement('div');
         topRow.className = 'cpay-actions';
 
-        const backBtn = document.createElement('button');
-        backBtn.type = 'button';
-        backBtn.className = 'cpay-back-btn';
-        backBtn.setAttribute('aria-label', this.t.backToWallets);
-        backBtn.textContent = this.t.backToWallets;
-        backBtn.onclick = () => {
-          this.currentView = 'methods';
-          this.render(payment, generation);
-        };
-        topRow.appendChild(backBtn);
+        // INVARIANT (CP-028 Criterion 2): UI never offers CONTRACT actions to a DIRECT deposit by error
+        if (!isDirect) {
+          const backBtn = document.createElement('button');
+          backBtn.type = 'button';
+          backBtn.className = 'cpay-back-btn';
+          backBtn.setAttribute('aria-label', this.t.backToWallets);
+          backBtn.textContent = this.t.backToWallets;
+          backBtn.onclick = () => {
+            this.currentView = 'methods';
+            this.render(payment, generation);
+          };
+          topRow.appendChild(backBtn);
+        }
 
         const netBadge = document.createElement('div');
         netBadge.className = 'cpay-network-badge';

@@ -11,6 +11,7 @@ export interface PaymentResponse {
     status: 'PENDING' | 'CONFIRMED' | 'FAILED' | 'REVIEW';
     txHash?: string;
     expiresAt: string;
+    paymentMethod?: 'DIRECT' | 'CONTRACT';
 }
 export type PaymentStatusResponse = PaymentResponse;
 /** Browser-only client. Merchant credentials and payment creation stay on your server. */

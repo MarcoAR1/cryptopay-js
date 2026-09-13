@@ -306,3 +306,46 @@ test('CP-039: Network naming, exchange notices and QR canvas rendering', async (
   }
 });
 
+test('CP-028 Criterion 2: UI never offers CONTRACT actions to a DIRECT payment by error', async () => {
+  const dom = createTestDOM();
+
+  const directPayment = {
+    ...paymentA,
+    paymentMethod: 'DIRECT',
+  };
+
+  dom.window.fetch = async () => ({ ok: true, json: async () => directPayment });
+
+  // Explicitly configure defaultView: 'methods' to test that DIRECT payment strictly overrides it!
+  const widget = dom.window.SDK.createCheckout({
+    baseUrl: 'https://gateway.cryptopay.example',
+    paymentId: 'pay_merchant_alpha',
+    checkoutToken: 'token_alpha',
+    defaultView: 'methods',
+    locale: 'en'
+  });
+
+  try {
+    widget.mount('#checkout');
+    await flush();
+
+    const checkoutEl = dom.window.document.querySelector('#checkout');
+
+    // 1. Must render QR and address view directly
+    assert.ok(checkoutEl.querySelector('.cpay-qr-view'), 'Must render .cpay-qr-view for DIRECT payment');
+    assert.ok(checkoutEl.querySelector('.cpay-address-box'), 'Must render deposit address box');
+
+    // 2. Must NOT render any CONTRACT actions (no wallet connect or method buttons)
+    assert.equal(checkoutEl.querySelector('.cpay-methods'), null, 'Must NOT render .cpay-methods container');
+    assert.equal(checkoutEl.querySelector('.cpay-method-btn'), null, 'Must NOT render any .cpay-method-btn');
+    assert.equal(checkoutEl.querySelector('.cpay-method-gasless'), null, 'Must NOT render gasless contract button');
+
+    // 3. Must NOT render "Back to Wallets" button since there are no wallet contract actions
+    assert.equal(checkoutEl.querySelector('.cpay-back-btn'), null, 'Must NOT render .cpay-back-btn for DIRECT payment');
+  } finally {
+    widget.destroy();
+    dom.window.close();
+  }
+});
+
+
