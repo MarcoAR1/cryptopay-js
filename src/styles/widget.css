@@ -92,7 +92,8 @@
   align-items: center;
   gap: 16px;
   width: 100%;
-  padding: 16px 20px;
+  min-height: 48px;
+  padding: 14px 20px;
   background: var(--cpay-card);
   border: 1px solid var(--cpay-border);
   border-radius: 12px;
@@ -109,6 +110,15 @@
   border-color: var(--cpay-accent);
   background: rgba(108,92,231,0.06);
   transform: translateY(-1px);
+}
+
+.cpay-method-btn:focus-visible,
+.cpay-copy-btn:focus-visible,
+.cpay-back-btn:focus-visible,
+.cpay-retry-btn:focus-visible,
+.cpay-modal-close-btn:focus-visible {
+  outline: 2px solid var(--cpay-accent);
+  outline-offset: 2px;
 }
 
 .cpay-method-icon {
@@ -202,8 +212,13 @@
   border: none;
   cursor: pointer;
   font-size: 16px;
-  padding: 4px;
-  border-radius: 6px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 8px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   transition: background 0.2s;
 }
 
@@ -243,9 +258,17 @@
   cursor: pointer;
   font-size: 13px;
   font-family: var(--cpay-font);
-  padding: 6px 12px;
+  min-height: 44px;
+  padding: 8px 14px;
   border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
   transition: all 0.2s;
+}
+
+.cpay-back-btn:hover {
+  color: var(--cpay-text);
+  background: rgba(255,255,255,0.05);
 }
 
 .cpay-back-btn:hover {
@@ -362,6 +385,7 @@
 
 .cpay-retry-btn {
   margin-top: 8px;
+  min-height: 44px;
   padding: 10px 24px;
   background: var(--cpay-accent);
   color: #fff;
@@ -372,6 +396,9 @@
   cursor: pointer;
   font-family: var(--cpay-font);
   transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .cpay-retry-btn:hover {
@@ -443,15 +470,15 @@
 
 .cpay-modal-close-btn {
   position: absolute;
-  top: -14px;
-  right: -14px;
-  width: 32px;
-  height: 32px;
+  top: -16px;
+  right: -16px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   background: #16161f;
   border: 1px solid rgba(255, 255, 255, 0.15);
   color: #f0f0f5;
-  font-size: 14px;
+  font-size: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -470,5 +497,45 @@
   from { opacity: 0; }
   to { opacity: 1; }
 }
+
+/* ─── Mobile & Accessibility Responsive Design ────────── */
+@media (max-width: 480px) {
+  .cpay-widget {
+    max-width: 100%;
+    border-radius: 12px;
+  }
+
+  .cpay-header {
+    padding: 16px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .cpay-amount {
+    font-size: 20px;
+  }
+
+  .cpay-body {
+    padding: 16px;
+  }
+
+  .cpay-address-row {
+    padding: 10px 12px;
+  }
+
+  .cpay-address {
+    font-size: 10px;
+  }
+
+  .cpay-modal-container {
+    max-width: 100%;
+  }
+
+  .cpay-modal-close-btn {
+    top: -12px;
+    right: 0px;
+  }
+}
+
 
 

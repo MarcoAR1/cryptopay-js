@@ -16,6 +16,7 @@ import {
   renderPaymentQRCode,
   getNetworkName,
 } from '../checkout';
+import { SupportedLocale, getTranslations } from '../i18n';
 import { InjectedWalletAdapter, WalletPaymentManager, WalletAdapter } from '../core/wallet-adapter';
 
 export interface UseCryptoPaySessionOptions {
@@ -252,6 +253,7 @@ export interface CryptoPayQRCodeProps {
   chainId?: number;
   className?: string;
   showAddress?: boolean;
+  locale?: SupportedLocale;
   onAddressCopied?: () => void;
 }
 
@@ -267,10 +269,12 @@ export function CryptoPayQRCode({
   chainId,
   className,
   showAddress = true,
+  locale,
   onAddressCopied
 }: CryptoPayQRCodeProps): React.ReactElement {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [copied, setCopied] = useState(false);
+  const t = getTranslations(locale);
 
   // Contract address safety guard (CP-039 invariant)
   const isInvalid = Boolean(
@@ -293,7 +297,7 @@ export function CryptoPayQRCode({
     return React.createElement(
       'div',
       { className: `cpay-error-box ${className || ''}`.trim() },
-      React.createElement('p', { className: 'cpay-error-text' }, 'Invalid deposit destination: Token contract cannot be used as payment destination.')
+      React.createElement('p', { className: 'cpay-error-text' }, t.errors.depositDestination)
     );
   }
 
@@ -310,7 +314,14 @@ export function CryptoPayQRCode({
     'div',
     { className: `cpay-qr-modular ${className || ''}`.trim() },
     chainId ? React.createElement('div', { className: 'cpay-network-badge' }, `🌐 ${getNetworkName(chainId)}`) : null,
-    React.createElement('canvas', { ref: canvasRef, width, height: width, style: { maxWidth: '100%' } }),
+    React.createElement('canvas', {
+      ref: canvasRef,
+      width,
+      height: width,
+      style: { maxWidth: '100%' },
+      role: 'img',
+      'aria-label': t.aria.qrCode
+    }),
     showAddress
       ? React.createElement(
           'div',
@@ -322,9 +333,10 @@ export function CryptoPayQRCode({
               type: 'button',
               className: 'cpay-copy-btn',
               onClick: handleCopy,
-              'aria-label': 'Copy address'
+              'aria-label': t.aria.copyAddress,
+              title: t.copyAddress
             },
-            copied ? '✓ Copied' : '📋 Copy'
+            copied ? `✓ ${t.addressCopied}` : `📋 ${t.copyAddress}`
           )
         )
       : null
@@ -333,31 +345,37 @@ export function CryptoPayQRCode({
 
 export interface CryptoPayStatusBadgeProps {
   state: CheckoutState;
+  locale?: SupportedLocale;
   className?: string;
 }
 
 /**
  * Status badge reflecting the current checkout lifecycle state.
  */
-export function CryptoPayStatusBadge({ state, className }: CryptoPayStatusBadgeProps): React.ReactElement {
+export function CryptoPayStatusBadge({ state, locale, className }: CryptoPayStatusBadgeProps): React.ReactElement {
+  const t = getTranslations(locale);
   const getLabel = (s: CheckoutState) => {
     switch (s) {
-      case 'INITIALIZING': return 'Initializing...';
-      case 'AWAITING_PAYMENT': return 'Awaiting Payment';
-      case 'WALLET_PREPARING': return 'Preparing Wallet...';
-      case 'CONFIRMING': return 'Confirming Block...';
-      case 'CONFIRMED': return 'Payment Confirmed';
-      case 'FAILED': return 'Payment Failed';
-      case 'EXPIRED': return 'Session Expired';
-      case 'CANCELLED': return 'Session Cancelled';
-      case 'REVIEW': return 'Needs Review';
+      case 'INITIALIZING': return t.statusBadges.initializing;
+      case 'AWAITING_PAYMENT': return t.statusBadges.awaitingPayment;
+      case 'WALLET_PREPARING': return t.statusBadges.walletPreparing;
+      case 'CONFIRMING': return t.statusBadges.confirming;
+      case 'CONFIRMED': return t.statusBadges.confirmed;
+      case 'FAILED': return t.statusBadges.failed;
+      case 'EXPIRED': return t.statusBadges.expired;
+      case 'CANCELLED': return t.statusBadges.cancelled;
+      case 'REVIEW': return t.statusBadges.review;
       default: return s;
     }
   };
 
   return React.createElement(
     'span',
-    { className: `cpay-status-badge cpay-status-${state.toLowerCase()} ${className || ''}`.trim() },
+    {
+      className: `cpay-status-badge cpay-status-${state.toLowerCase()} ${className || ''}`.trim(),
+      role: 'status',
+      'aria-label': `${t.aria.statusBadge}: ${getLabel(state)}`
+    },
     getLabel(state)
   );
 }
@@ -366,6 +384,7 @@ export interface CryptoPayWalletButtonProps {
   onPay?: () => Promise<void>;
   disabled?: boolean;
   label?: string;
+  locale?: SupportedLocale;
   className?: string;
 }
 
@@ -375,10 +394,13 @@ export interface CryptoPayWalletButtonProps {
 export function CryptoPayWalletButton({
   onPay,
   disabled = false,
-  label = 'Pay with Web3 Wallet',
+  label,
+  locale,
   className
 }: CryptoPayWalletButtonProps): React.ReactElement {
   const [loading, setLoading] = useState(false);
+  const t = getTranslations(locale);
+  const resolvedLabel = label || t.payWithWallet;
 
   const handleClick = async () => {
     if (!onPay || loading || disabled) return;
@@ -396,8 +418,9 @@ export function CryptoPayWalletButton({
       type: 'button',
       className: `cpay-wallet-btn ${className || ''}`.trim(),
       onClick: handleClick,
-      disabled: disabled || loading
+      disabled: disabled || loading,
+      'aria-label': `${t.aria.walletButton}: ${resolvedLabel}`
     },
-    loading ? 'Processing...' : label
+    loading ? t.connecting : resolvedLabel
   );
 }

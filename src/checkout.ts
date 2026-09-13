@@ -1,6 +1,12 @@
 import { CryptoPayAPI, PaymentResponse } from './api';
 import { detectWallets, executeTransaction } from './wallet';
 import QRCode from 'qrcode';
+import {
+  SupportedLocale,
+  TranslationCatalog,
+  getTranslations,
+  formatAmountDisplay,
+} from './i18n';
 import './styles/widget.css';
 
 export interface CheckoutConfig {
@@ -9,7 +15,7 @@ export interface CheckoutConfig {
   baseUrl: string;
   theme?: 'dark' | 'light';
   customStyles?: Record<string, string>;
-  locale?: 'es' | 'en';
+  locale?: SupportedLocale;
   defaultView?: 'methods' | 'qr';
   onSuccess?: (payment: PaymentResponse) => void;
   onError?: (error: string) => void;
@@ -71,12 +77,14 @@ export class CryptoPayCheckout {
   private isDestroyed = false;
   private currentView: CheckoutView = 'methods';
   private latestPayment: PaymentResponse | null = null;
+  private t: TranslationCatalog;
 
   constructor(private config: CheckoutConfig) {
     if (!config.paymentId || !config.checkoutToken) {
       throw new Error('A server-created checkout session is required');
     }
     this.api = new CryptoPayAPI(config.baseUrl);
+    this.t = getTranslations(config.locale);
     if (config.defaultView) {
       this.currentView = config.defaultView;
     }
@@ -222,6 +230,8 @@ export class CryptoPayCheckout {
 
     const widget = document.createElement('div');
     widget.className = 'cpay-widget';
+    widget.setAttribute('role', 'region');
+    widget.setAttribute('aria-label', this.t.checkoutTitle);
 
     // Header
     const header = document.createElement('div');
@@ -234,7 +244,7 @@ export class CryptoPayCheckout {
     const amountWrapper = document.createElement('div');
     const amount = document.createElement('p');
     amount.className = 'cpay-amount';
-    amount.textContent = `${payment.amount} `;
+    amount.textContent = `${formatAmountDisplay(payment.amount, this.config.locale)} `;
 
     const currency = document.createElement('span');
     currency.className = 'cpay-currency';
@@ -244,7 +254,9 @@ export class CryptoPayCheckout {
 
     const statusP = document.createElement('p');
     statusP.className = 'cpay-status';
-    statusP.textContent = payment.status;
+    statusP.setAttribute('aria-live', 'polite');
+    const badgeKey = payment.status.toLowerCase() as keyof TranslationCatalog['statusBadges'];
+    statusP.textContent = this.t.statusBadges[badgeKey] || payment.status;
 
     header.appendChild(logo);
     header.appendChild(amountWrapper);
@@ -261,17 +273,16 @@ export class CryptoPayCheckout {
 
       const check = document.createElement('div');
       check.className = 'cpay-check';
+      check.setAttribute('aria-hidden', 'true');
       check.textContent = '✓';
 
       const text = document.createElement('p');
       text.className = 'cpay-success-text';
-      text.textContent = this.config.locale === 'es' ? 'Pago confirmado' : 'Payment Confirmed';
+      text.textContent = this.t.paymentConfirmed;
 
       const sub = document.createElement('p');
       sub.className = 'cpay-success-sub';
-      sub.textContent = this.config.locale === 'es'
-        ? 'Transacción validada exitosamente'
-        : 'Transaction confirmed on blockchain';
+      sub.textContent = this.t.paymentConfirmedDesc;
 
       successView.appendChild(check);
       successView.appendChild(text);
@@ -283,9 +294,14 @@ export class CryptoPayCheckout {
 
       const errText = document.createElement('p');
       errText.className = 'cpay-error-text';
-      errText.textContent = this.config.locale === 'es' ? 'El pago no pudo completarse' : 'Payment failed';
+      errText.textContent = this.t.paymentFailed;
+
+      const errSub = document.createElement('p');
+      errSub.className = 'cpay-pending-sub';
+      errSub.textContent = this.t.paymentFailedDesc;
 
       errorView.appendChild(errText);
+      errorView.appendChild(errSub);
       body.appendChild(errorView);
     } else if (payment.status === 'REVIEW') {
       const reviewView = document.createElement('div');
@@ -293,13 +309,11 @@ export class CryptoPayCheckout {
 
       const pText = document.createElement('p');
       pText.className = 'cpay-pending-text';
-      pText.textContent = this.config.locale === 'es' ? 'En revisión' : 'Under Review';
+      pText.textContent = this.t.paymentUnderReview;
 
       const pSub = document.createElement('p');
       pSub.className = 'cpay-pending-sub';
-      pSub.textContent = this.config.locale === 'es'
-        ? 'Verificando transacción en blockchain...'
-        : 'Validating blockchain deposit...';
+      pSub.textContent = this.t.paymentUnderReviewDesc;
 
       reviewView.appendChild(pText);
       reviewView.appendChild(pSub);
@@ -309,7 +323,7 @@ export class CryptoPayCheckout {
       if (this.currentView === 'qr') {
         if (payment.paymentAddress && payment.tokenAddress &&
             payment.paymentAddress.toLowerCase() === payment.tokenAddress.toLowerCase()) {
-          this.renderError('Invalid deposit destination: contract address cannot receive direct deposits');
+          this.renderError(this.t.errors.depositDestination);
           return;
         }
 
@@ -322,7 +336,8 @@ export class CryptoPayCheckout {
         const backBtn = document.createElement('button');
         backBtn.type = 'button';
         backBtn.className = 'cpay-back-btn';
-        backBtn.textContent = this.config.locale === 'es' ? '← Volver a métodos' : '← Back to wallets';
+        backBtn.setAttribute('aria-label', this.t.backToWallets);
+        backBtn.textContent = this.t.backToWallets;
         backBtn.onclick = () => {
           this.currentView = 'methods';
           this.render(payment, generation);
@@ -336,6 +351,8 @@ export class CryptoPayCheckout {
         qrView.appendChild(topRow);
 
         const canvas = document.createElement('canvas');
+        canvas.setAttribute('role', 'img');
+        canvas.setAttribute('aria-label', this.t.aria.qrCode);
         const qrContainer = document.createElement('div');
         qrContainer.className = 'cpay-qr-container';
         qrContainer.appendChild(canvas);
@@ -350,7 +367,7 @@ export class CryptoPayCheckout {
 
         const label = document.createElement('span');
         label.className = 'cpay-address-label';
-        label.textContent = this.config.locale === 'es' ? 'Dirección de depósito:' : 'Deposit address:';
+        label.textContent = this.t.depositAddress;
 
         const row = document.createElement('div');
         row.className = 'cpay-address-row';
@@ -362,7 +379,8 @@ export class CryptoPayCheckout {
         const copyBtn = document.createElement('button');
         copyBtn.type = 'button';
         copyBtn.className = 'cpay-copy-btn';
-        copyBtn.title = 'Copiar dirección';
+        copyBtn.title = this.t.copyAddress;
+        copyBtn.setAttribute('aria-label', this.t.aria.copyAddress);
         copyBtn.textContent = '📋';
         copyBtn.onclick = () => {
           if (typeof navigator !== 'undefined' && navigator.clipboard) {
@@ -378,12 +396,10 @@ export class CryptoPayCheckout {
         addressBox.appendChild(row);
         qrView.appendChild(addressBox);
 
-        // Operational notice regarding exchanges
+        // Operational notice regarding direct deposits / exchanges
         const notice = document.createElement('div');
         notice.className = 'cpay-notice';
-        notice.textContent = this.config.locale === 'es'
-          ? '⚠️ Transferencias desde Exchanges: Copia y pega la dirección directamente en tu exchange. Los exchanges centralizados (ej. Binance) no son compatibles con el escaneo de códigos QR ERC-20.'
-          : '⚠️ Exchange transfers: Copy and paste the address manually into your exchange. Centralized exchanges do not support scanning ERC-20 QR codes.';
+        notice.textContent = this.t.directDepositNotice;
         qrView.appendChild(notice);
 
         body.appendChild(qrView);
@@ -398,7 +414,8 @@ export class CryptoPayCheckout {
           const button = document.createElement('button');
           button.type = 'button';
           button.className = 'cpay-method-btn';
-          button.textContent = `Pay with ${wallet.name}`;
+          button.textContent = `${this.t.payWithWallet} (${wallet.name})`;
+          button.setAttribute('aria-label', `${this.t.aria.walletButton}: ${wallet.name}`);
           button.disabled = this.sending;
 
           button.onclick = async () => {
@@ -451,7 +468,8 @@ export class CryptoPayCheckout {
         const qrBtn = document.createElement('button');
         qrBtn.type = 'button';
         qrBtn.className = 'cpay-method-btn';
-        qrBtn.textContent = this.config.locale === 'es' ? '📱 Ver código QR / Depósito directo' : '📱 Pay with QR / Direct deposit';
+        qrBtn.textContent = this.t.payWithQR;
+        qrBtn.setAttribute('aria-label', this.t.payWithQR);
         qrBtn.onclick = () => {
           this.currentView = 'qr';
           this.render(payment, generation);
@@ -482,6 +500,8 @@ export class CryptoPayCheckout {
 
     const widget = document.createElement('div');
     widget.className = 'cpay-widget';
+    widget.setAttribute('role', 'region');
+    widget.setAttribute('aria-label', this.t.checkoutTitle);
 
     const body = document.createElement('div');
     body.className = 'cpay-body';
@@ -496,7 +516,8 @@ export class CryptoPayCheckout {
     const retryBtn = document.createElement('button');
     retryBtn.type = 'button';
     retryBtn.className = 'cpay-retry-btn';
-    retryBtn.textContent = this.config.locale === 'es' ? 'Reintentar' : 'Retry';
+    retryBtn.textContent = this.t.retry;
+    retryBtn.setAttribute('aria-label', this.t.retry);
     retryBtn.onclick = () => {
       void this.refresh(this.generation);
     };

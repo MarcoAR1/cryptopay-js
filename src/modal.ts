@@ -1,4 +1,5 @@
 import { CryptoPayCheckout, CheckoutConfig } from './checkout';
+import { getTranslations } from './i18n';
 
 export interface ModalConfig extends CheckoutConfig {
   onClose?: () => void;
@@ -29,6 +30,8 @@ export class CryptoPayModal {
     this.isOpen = true;
     this.previousActiveElement = document.activeElement as HTMLElement | null;
 
+    const t = getTranslations(this.config.locale);
+
     // Lock background scrolling
     document.body.style.overflow = 'hidden';
 
@@ -37,7 +40,7 @@ export class CryptoPayModal {
     this.overlay.className = 'cpay-modal-overlay';
     this.overlay.setAttribute('role', 'dialog');
     this.overlay.setAttribute('aria-modal', 'true');
-    this.overlay.setAttribute('aria-label', this.config.locale === 'es' ? 'Ventana de pago CryptoPay' : 'CryptoPay Checkout Dialog');
+    this.overlay.setAttribute('aria-label', t.aria.dialog);
 
     // Dialog container
     const container = document.createElement('div');
@@ -47,7 +50,7 @@ export class CryptoPayModal {
     const closeBtn = document.createElement('button');
     closeBtn.type = 'button';
     closeBtn.className = 'cpay-modal-close-btn';
-    closeBtn.setAttribute('aria-label', this.config.locale === 'es' ? 'Cerrar ventana de pago' : 'Close payment modal');
+    closeBtn.setAttribute('aria-label', t.aria.closeModal);
     closeBtn.textContent = '✕';
     closeBtn.onclick = () => this.close();
     container.appendChild(closeBtn);

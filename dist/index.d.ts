@@ -11,6 +11,7 @@ export * from './core/wallet-adapter';
 export * from './core/types';
 export * from './core/errors';
 export * from './core/contract-payment';
+export * from './i18n';
 export { CryptoPayNodeClient } from './node/client';
 export type { ClientConfig, CreatePaymentParams, ListPaymentsParams, ListPaymentsResponse, QuoteResponse } from './node/types';
 export { CryptoPayNodeError, AuthenticationError, ConflictError, RateLimitError, TimeoutError, AmbiguousTimeoutError, ServerError, } from './node/errors';

@@ -2,6 +2,7 @@ import React from 'react';
 import { HeadlessPaymentSession } from '../core/session';
 import { CheckoutState, CheckoutSessionData } from '../core/types';
 import { CheckoutConfig } from '../checkout';
+import { SupportedLocale } from '../i18n';
 import { WalletAdapter } from '../core/wallet-adapter';
 export interface UseCryptoPaySessionOptions {
     baseUrl: string;
@@ -52,28 +53,31 @@ export interface CryptoPayQRCodeProps {
     chainId?: number;
     className?: string;
     showAddress?: boolean;
+    locale?: SupportedLocale;
     onAddressCopied?: () => void;
 }
 /**
  * Standalone QR Code & Deposit Address component.
  * Validates the contract address guard: refuses to render if paymentAddress === tokenAddress.
  */
-export declare function CryptoPayQRCode({ paymentAddress, tokenAddress, qrCodeUrl, width, chainId, className, showAddress, onAddressCopied }: CryptoPayQRCodeProps): React.ReactElement;
+export declare function CryptoPayQRCode({ paymentAddress, tokenAddress, qrCodeUrl, width, chainId, className, showAddress, locale, onAddressCopied }: CryptoPayQRCodeProps): React.ReactElement;
 export interface CryptoPayStatusBadgeProps {
     state: CheckoutState;
+    locale?: SupportedLocale;
     className?: string;
 }
 /**
  * Status badge reflecting the current checkout lifecycle state.
  */
-export declare function CryptoPayStatusBadge({ state, className }: CryptoPayStatusBadgeProps): React.ReactElement;
+export declare function CryptoPayStatusBadge({ state, locale, className }: CryptoPayStatusBadgeProps): React.ReactElement;
 export interface CryptoPayWalletButtonProps {
     onPay?: () => Promise<void>;
     disabled?: boolean;
     label?: string;
+    locale?: SupportedLocale;
     className?: string;
 }
 /**
  * Action button to trigger wallet payment with loading state.
  */
-export declare function CryptoPayWalletButton({ onPay, disabled, label, className }: CryptoPayWalletButtonProps): React.ReactElement;
+export declare function CryptoPayWalletButton({ onPay, disabled, label, locale, className }: CryptoPayWalletButtonProps): React.ReactElement;

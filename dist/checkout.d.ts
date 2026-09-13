@@ -1,4 +1,5 @@
 import { PaymentResponse } from './api';
+import { SupportedLocale } from './i18n';
 import './styles/widget.css';
 export interface CheckoutConfig {
     paymentId: string;
@@ -6,7 +7,7 @@ export interface CheckoutConfig {
     baseUrl: string;
     theme?: 'dark' | 'light';
     customStyles?: Record<string, string>;
-    locale?: 'es' | 'en';
+    locale?: SupportedLocale;
     defaultView?: 'methods' | 'qr';
     onSuccess?: (payment: PaymentResponse) => void;
     onError?: (error: string) => void;
@@ -42,6 +43,7 @@ export declare class CryptoPayCheckout {
     private isDestroyed;
     private currentView;
     private latestPayment;
+    private t;
     constructor(config: CheckoutConfig);
     /**
      * Mounts the checkout widget into the specified container element or selector.
