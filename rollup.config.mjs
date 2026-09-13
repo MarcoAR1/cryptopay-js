@@ -6,30 +6,50 @@ import postcss from 'rollup-plugin-postcss';
 
 const production = !process.env.ROLLUP_WATCH;
 
-export default {
-  input: 'src/index.ts',
-  output: [
-    { file: 'dist/checkout.cjs', format: 'cjs', sourcemap: true },
-    {
-      file: 'dist/checkout.js',
-      format: 'iife',
-      name: 'CryptoPay',
-      sourcemap: true,
-    },
-    {
-      file: 'dist/checkout.mjs',
-      format: 'es',
-      sourcemap: true,
-    },
-  ],
-  plugins: [
-    postcss({
-      inject: true,
-      minimize: production,
-    }),
-    resolve({ browser: true }),
-    commonjs(),
-    typescript({ tsconfig: './tsconfig.json', declaration: true }),
-    production && terser(),
-  ],
-};
+export default [
+  {
+    input: 'src/index.ts',
+    output: [
+      { file: 'dist/checkout.cjs', format: 'cjs', sourcemap: true },
+      {
+        file: 'dist/checkout.js',
+        format: 'iife',
+        name: 'CryptoPay',
+        sourcemap: true,
+      },
+      {
+        file: 'dist/checkout.mjs',
+        format: 'es',
+        sourcemap: true,
+      },
+    ],
+    plugins: [
+      postcss({
+        inject: true,
+        minimize: production,
+      }),
+      resolve({ browser: true }),
+      commonjs(),
+      typescript({ tsconfig: './tsconfig.json' }),
+      production && terser(),
+    ],
+  },
+  {
+    input: 'src/react/index.ts',
+    output: [
+      { file: 'dist/react.cjs', format: 'cjs', sourcemap: true, banner: "'use client';" },
+      { file: 'dist/react.mjs', format: 'es', sourcemap: true, banner: "'use client';" },
+    ],
+    external: ['react', 'react-dom', 'qrcode'],
+    plugins: [
+      postcss({
+        inject: true,
+        minimize: production,
+      }),
+      resolve({ browser: true }),
+      commonjs(),
+      typescript({ tsconfig: './tsconfig.json' }),
+      production && terser(),
+    ],
+  },
+];

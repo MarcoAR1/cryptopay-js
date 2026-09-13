@@ -1,6 +1,8 @@
 import { CryptoPayCheckout, CheckoutConfig } from './checkout';
-export { CryptoPayCheckout } from './checkout';
-export type { CheckoutConfig } from './checkout';
+export { CryptoPayCheckout, renderPaymentQRCode, getNetworkName, InvalidDepositDestinationError } from './checkout';
+export type { CheckoutConfig, CheckoutView, PaymentQRCodeOptions } from './checkout';
+export { CryptoPayModal, openModal } from './modal';
+export type { ModalConfig } from './modal';
 export { CryptoPayAPI } from './api';
 export type { PaymentResponse } from './api';
 export { detectWallets, connectWallet, executeTransaction } from './wallet';

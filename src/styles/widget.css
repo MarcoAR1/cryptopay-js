@@ -379,6 +379,32 @@
   transform: translateY(-1px);
 }
 
+/* ─── Notices & Network Badges ────────────────────────── */
+.cpay-network-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(108,92,231,0.12);
+  color: var(--cpay-accent-light);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.cpay-notice {
+  font-size: 11px;
+  line-height: 1.45;
+  color: var(--cpay-text2);
+  background: rgba(255,255,255,0.03);
+  padding: 10px 14px;
+  border-radius: 8px;
+  margin-top: 14px;
+  border: 1px solid var(--cpay-border);
+  text-align: left;
+}
+
 /* ─── Footer ──────────────────────────────────────────── */
 .cpay-footer {
   padding: 14px 24px;
@@ -391,3 +417,58 @@
   color: var(--cpay-text3);
   letter-spacing: 0.02em;
 }
+
+/* ─── Modal Overlay & Container ────────────────────────── */
+.cpay-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999999;
+  padding: 16px;
+  animation: cpay-fade-in 0.2s ease-out;
+}
+
+.cpay-modal-container {
+  position: relative;
+  max-width: 460px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.cpay-modal-close-btn {
+  position: absolute;
+  top: -14px;
+  right: -14px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #16161f;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #f0f0f5;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.2s;
+}
+
+.cpay-modal-close-btn:hover {
+  background: #ff6b6b;
+  color: #fff;
+  border-color: #ff6b6b;
+}
+
+@keyframes cpay-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+
