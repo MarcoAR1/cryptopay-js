@@ -7,10 +7,20 @@ import {
   QuoteResponse,
   RequestWithdrawalParams,
   WithdrawalResponse,
+  RequestRefundParams,
+  RefundResponse,
+  RefundQuoteResponse,
+  TreasuryBalanceResponse,
+  MerchantConfigResponse,
+  UpdateMerchantConfigParams,
+  ExportReconciliationParams,
+  ExportReconciliationResponse,
+  MerchantPaymentDetailResponse,
 } from './types';
 import {
   CryptoPayNodeError,
   AuthenticationError,
+  ForbiddenError,
   ConflictError,
   RateLimitError,
   TimeoutError,
@@ -119,8 +129,11 @@ export class CryptoPayNodeClient {
 
           const message = errorBody?.message || errorBody?.error || `Request failed with status ${response.status}`;
 
-          if (response.status === 401 || response.status === 403) {
-            throw new AuthenticationError(message, responseRequestId);
+          if (response.status === 401) {
+            throw new AuthenticationError(message, responseRequestId, 401);
+          }
+          if (response.status === 403) {
+            throw new ForbiddenError(message, responseRequestId);
           }
           if (response.status === 409) {
             throw new ConflictError(message, responseRequestId);
@@ -214,16 +227,113 @@ export class CryptoPayNodeClient {
   }
 
   async requestWithdrawal(params: RequestWithdrawalParams, signal?: AbortSignal): Promise<WithdrawalResponse> {
-    return this.request<WithdrawalResponse>('POST', '/v1/withdrawals', {
-      body: params,
-      idempotencyKey: params.idempotencyKey,
+    const idempotencyKey = params.idempotencyKey || this.generateId();
+    return this.request<WithdrawalResponse>('POST', '/v1/merchant/withdrawals', {
+      body: { ...params, idempotencyKey },
+      idempotencyKey,
       signal,
     });
   }
 
   async getWithdrawal(withdrawalId: string, signal?: AbortSignal): Promise<WithdrawalResponse> {
-    return this.request<WithdrawalResponse>('GET', `/v1/withdrawals/${encodeURIComponent(withdrawalId)}`, {
+    return this.request<WithdrawalResponse>('GET', `/v1/merchant/withdrawals/${encodeURIComponent(withdrawalId)}`, {
       signal,
     });
+  }
+
+  async listWithdrawals(signal?: AbortSignal): Promise<WithdrawalResponse[]> {
+    return this.request<WithdrawalResponse[]>('GET', '/v1/merchant/withdrawals', {
+      signal,
+    });
+  }
+
+  async requestRefund(
+    paymentId: string,
+    params: RequestRefundParams,
+    signal?: AbortSignal
+  ): Promise<RefundResponse> {
+    if (!params.idempotencyKey || !params.idempotencyKey.trim()) {
+      throw new Error('idempotencyKey is required for refund requests');
+    }
+    return this.request<RefundResponse>(
+      'POST',
+      `/v1/merchant/payments/${encodeURIComponent(paymentId)}/refund`,
+      {
+        body: params,
+        idempotencyKey: params.idempotencyKey,
+        signal,
+      }
+    );
+  }
+
+  async getRefundQuote(paymentId: string, signal?: AbortSignal): Promise<RefundQuoteResponse> {
+    return this.request<RefundQuoteResponse>(
+      'GET',
+      `/v1/merchant/payments/${encodeURIComponent(paymentId)}/refund-quote`,
+      {
+        signal,
+      }
+    );
+  }
+
+  async getRefund(refundId: string, signal?: AbortSignal): Promise<RefundResponse> {
+    return this.request<RefundResponse>('GET', `/v1/merchant/refunds/${encodeURIComponent(refundId)}`, {
+      signal,
+    });
+  }
+
+  async listRefunds(paymentId: string, signal?: AbortSignal): Promise<RefundResponse[]> {
+    return this.request<RefundResponse[]>(
+      'GET',
+      `/v1/merchant/payments/${encodeURIComponent(paymentId)}/refunds`,
+      {
+        signal,
+      }
+    );
+  }
+
+  async getBalances(signal?: AbortSignal): Promise<TreasuryBalanceResponse[]> {
+    return this.request<TreasuryBalanceResponse[]>('GET', '/v1/merchant/balances', {
+      signal,
+    });
+  }
+
+  async exportReconciliation(
+    params?: ExportReconciliationParams,
+    signal?: AbortSignal
+  ): Promise<ExportReconciliationResponse> {
+    return this.request<ExportReconciliationResponse>('GET', '/v1/merchant/export/reconciliation', {
+      query: params,
+      signal,
+    });
+  }
+
+  async getMerchantConfig(signal?: AbortSignal): Promise<MerchantConfigResponse> {
+    return this.request<MerchantConfigResponse>('GET', '/v1/merchant/config', {
+      signal,
+    });
+  }
+
+  async updateMerchantConfig(
+    params: UpdateMerchantConfigParams,
+    signal?: AbortSignal
+  ): Promise<MerchantConfigResponse> {
+    return this.request<MerchantConfigResponse>('PUT', '/v1/merchant/config', {
+      body: params,
+      signal,
+    });
+  }
+
+  async getMerchantPayment(
+    paymentId: string,
+    signal?: AbortSignal
+  ): Promise<MerchantPaymentDetailResponse> {
+    return this.request<MerchantPaymentDetailResponse>(
+      'GET',
+      `/v1/merchant/payments/${encodeURIComponent(paymentId)}`,
+      {
+        signal,
+      }
+    );
   }
 }

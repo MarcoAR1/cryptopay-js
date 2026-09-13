@@ -1,4 +1,4 @@
-import { ClientConfig, CreatePaymentParams, PaymentResponse, ListPaymentsParams, ListPaymentsResponse, QuoteResponse, RequestWithdrawalParams, WithdrawalResponse } from './types';
+import { ClientConfig, CreatePaymentParams, PaymentResponse, ListPaymentsParams, ListPaymentsResponse, QuoteResponse, RequestWithdrawalParams, WithdrawalResponse, RequestRefundParams, RefundResponse, RefundQuoteResponse, TreasuryBalanceResponse, MerchantConfigResponse, UpdateMerchantConfigParams, ExportReconciliationParams, ExportReconciliationResponse, MerchantPaymentDetailResponse } from './types';
 export declare class CryptoPayNodeClient {
     private apiKey;
     private baseUrl;
@@ -20,4 +20,14 @@ export declare class CryptoPayNodeClient {
     getQuote(paymentId: string, signal?: AbortSignal): Promise<QuoteResponse>;
     requestWithdrawal(params: RequestWithdrawalParams, signal?: AbortSignal): Promise<WithdrawalResponse>;
     getWithdrawal(withdrawalId: string, signal?: AbortSignal): Promise<WithdrawalResponse>;
+    listWithdrawals(signal?: AbortSignal): Promise<WithdrawalResponse[]>;
+    requestRefund(paymentId: string, params: RequestRefundParams, signal?: AbortSignal): Promise<RefundResponse>;
+    getRefundQuote(paymentId: string, signal?: AbortSignal): Promise<RefundQuoteResponse>;
+    getRefund(refundId: string, signal?: AbortSignal): Promise<RefundResponse>;
+    listRefunds(paymentId: string, signal?: AbortSignal): Promise<RefundResponse[]>;
+    getBalances(signal?: AbortSignal): Promise<TreasuryBalanceResponse[]>;
+    exportReconciliation(params?: ExportReconciliationParams, signal?: AbortSignal): Promise<ExportReconciliationResponse>;
+    getMerchantConfig(signal?: AbortSignal): Promise<MerchantConfigResponse>;
+    updateMerchantConfig(params: UpdateMerchantConfigParams, signal?: AbortSignal): Promise<MerchantConfigResponse>;
+    getMerchantPayment(paymentId: string, signal?: AbortSignal): Promise<MerchantPaymentDetailResponse>;
 }

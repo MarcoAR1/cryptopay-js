@@ -28,9 +28,17 @@ export class CryptoPayNodeError extends Error {
 }
 
 export class AuthenticationError extends CryptoPayNodeError {
-  constructor(message = 'Invalid or missing API key', requestId?: string) {
-    super(message, 'AUTHENTICATION_ERROR', 401, requestId);
+  constructor(message = 'Invalid or missing API key', requestId?: string, statusCode = 401) {
+    super(message, 'AUTHENTICATION_ERROR', statusCode, requestId);
     this.name = 'AuthenticationError';
+  }
+}
+
+export class ForbiddenError extends AuthenticationError {
+  constructor(message = 'Forbidden access or cross-tenant violation', requestId?: string) {
+    super(message, requestId, 403);
+    this.name = 'ForbiddenError';
+    this.code = 'FORBIDDEN_ERROR';
   }
 }
 

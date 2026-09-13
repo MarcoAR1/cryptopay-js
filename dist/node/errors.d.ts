@@ -14,6 +14,9 @@ export declare class CryptoPayNodeError extends Error {
     };
 }
 export declare class AuthenticationError extends CryptoPayNodeError {
+    constructor(message?: string, requestId?: string, statusCode?: number);
+}
+export declare class ForbiddenError extends AuthenticationError {
     constructor(message?: string, requestId?: string);
 }
 export declare class ConflictError extends CryptoPayNodeError {
