@@ -1,163 +1,42 @@
-# ⟐ CryptoPay JS SDK
+# cryptopay-js ? checkout session SDK
 
-> Embeddable checkout widget for accepting crypto payments. 16KB, zero dependencies.
+Version **2.0.0-rc.1**, prepared locally for the CryptoPay v1 Sepolia pilot. This document does not imply that the RC has been published to npm.
 
-## Installation
+The source of truth is `crypto-pay/packages/sdk`. Build and export from that repository:
 
-### CDN (easiest)
-
-```html
-<script src="https://unpkg.com/@anthropic-ai/cryptopay-js/dist/checkout.js"></script>
+```sh
+npm run build:sdk
+npm run export:sdk
+npm --prefix ../cryptopay-js test
 ```
 
-### NPM
+From this repository, `npm pack` produces a locally installable tarball. Its prepack check validates hashes, CJS/ESM imports and declaration files. `provenance.json` identifies the source commit and whether the source had uncommitted changes. Review and export a clean source commit before publishing a stable release. No unrelated npm scope is used.
 
-```bash
-npm install @anthropic-ai/cryptopay-js
+## Usage
+
+Your backend authenticates to CryptoPay, fixes the order/amount and creates the payment. Return only its checkout session to the browser:
+
+```ts
+import { createCheckout } from 'cryptopay-js'
+
+const checkout = createCheckout({
+  baseUrl: 'https://YOUR_GATEWAY_HOST',
+  paymentId: serverCreatedPayment.paymentId,
+  checkoutToken: serverCreatedPayment.checkoutToken,
+  onSuccess: () => refreshReservationFromYourBackend(),
+  onError: message => console.error(message),
+})
+checkout.mount('#checkout')
+// React effect cleanup:
+// return () => checkout.unmount()
 ```
 
-## Quick Start
+For a script tag, load your hosted `dist/checkout.js` and use `CryptoPay.createCheckout(...)`. ESM is `dist/checkout.mjs`; CommonJS is `dist/checkout.cjs`; types are `dist/index.d.ts`. The old `checkout.esm.js` filename is refreshed as a compatibility artifact, but package exports use `.mjs`.
 
-```html
-<script src="https://unpkg.com/@anthropic-ai/cryptopay-js/dist/checkout.js"></script>
-<button id="pay-btn">Pay with Crypto</button>
+The QR encodes an ERC-20 transfer with chain and atomic amount. Wallet payments verify/switch chain and send the token transfer. A submitted hash does not trigger success: the SDK waits for server confirmation. `onSuccess` refreshes UI; only the merchant backend may apply business credits from verified events.
 
-<script>
-  CryptoPayCheckout.init({
-    apiKey: 'cpk_your_api_key_here',
-    apiUrl: 'https://api.cryptopay.dev',   // Your CryptoPay server URL
-    // testMode: true,                      // Use Sepolia testnet
-  });
+No API key, order price, private key or mnemonic belongs in this widget. The checkout token is scoped to reading one attempt. Use dynamic import or a client component when mounting inside Next.js. Importing the package on a server does not mount a widget.
 
-  document.getElementById('pay-btn').addEventListener('click', () => {
-    CryptoPayCheckout.open({
-      orderId: 'order_123',
-      amount: '25.00',
-      currency: 'USDT',
-      paymentMethod: 'DIRECT',   // 'DIRECT' (QR) or 'CONTRACT' (MetaMask)
-      onSuccess: (result) => {
-        console.log('Payment confirmed!', result);
-        // Redirect to success page, update UI, etc.
-      },
-      onError: (error) => {
-        console.error('Payment failed:', error);
-      },
-    });
-  });
-</script>
-```
+## Migration from v1
 
-## Payment Methods
-
-### Direct QR (`paymentMethod: 'DIRECT'`)
-
-Customer scans a QR code and sends USDT from any wallet (Trust Wallet, MetaMask, Exchange, etc.). The CryptoPay blockchain monitor detects the transfer automatically.
-
-**Best for:** Mobile users, exchange wallets, maximum compatibility.
-
-### Smart Contract (`paymentMethod: 'CONTRACT'`)
-
-Customer connects MetaMask, approves USDT, and pays through the CryptoPay smart contract. Fees are split automatically on-chain.
-
-**Best for:** Desktop users with MetaMask, instant confirmation.
-
-## Configuration
-
-```javascript
-CryptoPayCheckout.init({
-  apiKey: 'cpk_...',           // Required. Your API key from the dashboard
-  apiUrl: 'https://...',       // Required. Your CryptoPay server URL
-  theme: 'dark',               // Optional. 'dark' (default) or 'light'
-  testMode: false,              // Optional. Use Sepolia testnet
-});
-```
-
-## Events
-
-```javascript
-CryptoPayCheckout.open({
-  orderId: 'order_123',
-  amount: '25.00',
-  currency: 'USDT',
-  paymentMethod: 'DIRECT',
-
-  // Called when payment is successfully created (QR shown to user)
-  onPaymentCreated: (payment) => {
-    console.log('Payment address:', payment.paymentAddress);
-  },
-
-  // Called when payment is confirmed on-chain
-  onSuccess: (result) => {
-    console.log('Confirmed! TX:', result.txHash);
-  },
-
-  // Called on any error
-  onError: (error) => {
-    console.error('Error:', error.message);
-  },
-
-  // Called when user closes the checkout widget
-  onClose: () => {
-    console.log('User closed checkout');
-  },
-});
-```
-
-## Webhooks
-
-After integrating the SDK, set up webhook verification on your server:
-
-```javascript
-const crypto = require('crypto');
-
-app.post('/webhook', (req, res) => {
-  // Verify HMAC signature
-  const signature = req.headers['x-cryptopay-signature'];
-  const expected = 'sha256=' + crypto
-    .createHmac('sha256', process.env.WEBHOOK_SECRET)
-    .update(JSON.stringify(req.body))
-    .digest('hex');
-
-  if (signature !== expected) {
-    return res.status(401).send('Invalid signature');
-  }
-
-  switch (req.body.event) {
-    case 'PAYMENT_CREATED':
-      // Show pending state in your UI
-      break;
-    case 'PAYMENT_CONFIRMED':
-      // Fulfill the order!
-      break;
-    case 'PAYMENT_EXPIRED':
-      // Mark as expired after 24h
-      break;
-  }
-
-  res.status(200).send('OK');
-});
-```
-
-## Testing
-
-Use test mode with Sepolia testnet:
-
-```javascript
-CryptoPayCheckout.init({
-  apiKey: 'cpk_your_test_key',
-  apiUrl: 'http://localhost:3001',
-  testMode: true,
-});
-```
-
-Get free Sepolia ETH from [sepoliafaucet.com](https://sepoliafaucet.com).
-
-## Support
-
-- 📖 [Full Documentation](https://github.com/MarcoAR1/crypto-pay)
-- 🐛 [Report Issues](https://github.com/MarcoAR1/cryptopay-js/issues)
-- 💬 [Discussions](https://github.com/MarcoAR1/crypto-pay/discussions)
-
-## License
-
-MIT © CryptoPay
+The old API-key/amount configuration and documented `CryptoPayCheckout.init/open` API are not supported by this RC. Replace them with a server-created session. CONTRACT, automatic payouts and refunds are not SDK features. The pilot supports DIRECT USDT on Sepolia; keep existing production checkout until the backend migration is accepted.

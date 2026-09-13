@@ -1,0 +1,20 @@
+export interface PaymentResponse {
+    paymentId: string;
+    amount: string;
+    amountUnits: string;
+    currency: 'USDT';
+    chainId: number;
+    tokenAddress: string;
+    paymentAddress: string;
+    qrCodeUrl: string;
+    status: 'PENDING' | 'CONFIRMED' | 'FAILED' | 'REVIEW';
+    txHash?: string;
+    expiresAt: string;
+}
+export type PaymentStatusResponse = PaymentResponse;
+/** Browser-only client. Merchant credentials and payment creation stay on your server. */
+export declare class CryptoPayAPI {
+    private baseUrl;
+    constructor(baseUrl: string);
+    getPaymentStatus(paymentId: string, checkoutToken: string, signal?: AbortSignal): Promise<PaymentResponse>;
+}
