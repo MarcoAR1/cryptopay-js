@@ -1,4 +1,4 @@
-export type CheckoutState = 'INITIALIZING' | 'AWAITING_PAYMENT' | 'WALLET_PREPARING' | 'CONFIRMING' | 'CONFIRMED' | 'FAILED' | 'EXPIRED' | 'CANCELLED' | 'REVIEW';
+export type CheckoutState = 'INITIALIZING' | 'AWAITING_PAYMENT' | 'WALLET_PREPARING' | 'SPONSOR_SIGNING' | 'SPONSOR_BROADCASTING' | 'CONFIRMING' | 'CONFIRMED' | 'FAILED' | 'EXPIRED' | 'CANCELLED' | 'REVIEW';
 export interface CheckoutSessionData {
     paymentId: string;
     amount: string;

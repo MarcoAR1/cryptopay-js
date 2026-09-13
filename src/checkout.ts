@@ -1,5 +1,10 @@
 import { CryptoPayAPI, PaymentResponse } from './api';
 import { detectWallets, executeTransaction } from './wallet';
+import {
+  GaslessCapabilitiesResponse,
+  detectGaslessCapability,
+  prepareGaslessPermit,
+} from './core/gasless';
 import QRCode from 'qrcode';
 import {
   SupportedLocale,
@@ -77,6 +82,7 @@ export class CryptoPayCheckout {
   private isDestroyed = false;
   private currentView: CheckoutView = 'methods';
   private latestPayment: PaymentResponse | null = null;
+  private gaslessCapabilities: GaslessCapabilitiesResponse | null = null;
   private t: TranslationCatalog;
 
   constructor(private config: CheckoutConfig) {
@@ -196,6 +202,22 @@ export class CryptoPayCheckout {
       this.errors = 0;
       this.config.onStatusChange?.(payment.status);
       this.render(payment, generation);
+
+      if (!this.gaslessCapabilities) {
+        this.api
+          .getGaslessCapabilities(this.config.paymentId, this.config.checkoutToken, abort.signal)
+          .then((caps) => {
+            if (this.root && generation === this.generation && !this.isDestroyed) {
+              this.gaslessCapabilities = caps;
+              if (this.currentView === 'methods' && this.latestPayment?.status === 'PENDING') {
+                this.render(this.latestPayment, generation);
+              }
+            }
+          })
+          .catch(() => {
+            this.gaslessCapabilities = { isSupported: false, reason: 'Gasless unavailable' };
+          });
+      }
 
       if (payment.status === 'CONFIRMED' && !this.notified) {
         this.notified = true;
@@ -410,6 +432,107 @@ export class CryptoPayCheckout {
 
         // 1. Wallets detected
         const wallets = detectWallets();
+
+        // Check gasless availability
+        if (this.gaslessCapabilities?.isSupported) {
+          for (const wallet of wallets) {
+            const gaslessBtn = document.createElement('button');
+            gaslessBtn.type = 'button';
+            gaslessBtn.className = 'cpay-method-btn cpay-method-gasless';
+            gaslessBtn.setAttribute('aria-label', `${this.t.payGasless}: ${wallet.name}`);
+            gaslessBtn.disabled = this.sending;
+
+            const gaslessTitle = document.createElement('span');
+            gaslessTitle.textContent = `${this.t.payGasless} (${wallet.name})`;
+            const gaslessBadge = document.createElement('span');
+            gaslessBadge.className = 'cpay-gasless-badge';
+            gaslessBadge.textContent = this.t.gaslessSponsoredBadge;
+
+            gaslessBtn.appendChild(gaslessTitle);
+            gaslessBtn.appendChild(gaslessBadge);
+
+            gaslessBtn.onclick = async () => {
+              if (this.sending || generation !== this.generation) return;
+              this.sending = true;
+              gaslessBtn.disabled = true;
+
+              try {
+                // INVARIANT (Criterion 2): Capability detection NEVER invokes wallet_switchEthereumChain automatically.
+                const cap = await detectGaslessCapability({
+                  provider: wallet.provider,
+                  tokenAddress: payment.tokenAddress,
+                  chainId: payment.chainId,
+                  backendCapabilities: this.gaslessCapabilities!,
+                });
+
+                if (!cap.canPayGasless) {
+                  this.sending = false;
+                  gaslessBtn.disabled = false;
+                  this.config.onError?.(cap.reason || this.t.gaslessNotSupportedNotice);
+                  return;
+                }
+
+                statusP.textContent = this.t.statusBadges.sponsorSigning;
+                const accounts = await wallet.provider.request({ method: 'eth_requestAccounts' });
+                const payer = accounts[0];
+                if (!payer) throw new Error('No wallet account selected');
+
+                const permit = await prepareGaslessPermit({
+                  provider: wallet.provider,
+                  payer,
+                  spender: this.gaslessCapabilities!.forwarderAddress || payment.paymentAddress,
+                  value: payment.amountUnits,
+                  tokenInfo: {
+                    name: this.gaslessCapabilities!.tokenName || 'USD Coin',
+                    version: this.gaslessCapabilities!.tokenVersion || '2',
+                    chainId: payment.chainId,
+                    verifyingContract: this.gaslessCapabilities!.tokenAddress || payment.tokenAddress,
+                  },
+                });
+
+                statusP.textContent = this.t.statusBadges.sponsorBroadcasting;
+                const result = await this.api.submitGaslessPayment(
+                  payment.paymentId,
+                  this.config.checkoutToken,
+                  {
+                    payerAddress: payer,
+                    permit,
+                  }
+                );
+
+                if (result.success && result.status === 'CONFIRMED') {
+                  payment.status = 'CONFIRMED';
+                  payment.txHash = result.txHash;
+                  this.latestPayment = payment;
+                  this.render(payment, generation);
+                  if (!this.notified) {
+                    this.notified = true;
+                    this.config.onSuccess?.(payment);
+                  }
+                } else {
+                  throw new Error(result.error || 'Gasless payment could not be confirmed');
+                }
+              } catch (err) {
+                this.sending = false;
+                gaslessBtn.disabled = false;
+                statusP.textContent = this.t.statusBadges.awaitingPayment;
+                if (this.root && generation === this.generation) {
+                  this.config.onError?.(err instanceof Error ? err.message : 'Gasless payment failed');
+                }
+              }
+            };
+
+            methodsContainer.appendChild(gaslessBtn);
+          }
+        } else if (this.gaslessCapabilities && !this.gaslessCapabilities.isSupported) {
+          const unsuppNotice = document.createElement('div');
+          unsuppNotice.className = 'cpay-notice';
+          unsuppNotice.style.fontSize = '12px';
+          unsuppNotice.style.textAlign = 'left';
+          unsuppNotice.textContent = `ℹ️ ${this.t.gaslessNotSupportedNotice}`;
+          methodsContainer.appendChild(unsuppNotice);
+        }
+
         for (const wallet of wallets) {
           const button = document.createElement('button');
           button.type = 'button';

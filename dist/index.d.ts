@@ -11,6 +11,7 @@ export * from './core/wallet-adapter';
 export * from './core/types';
 export * from './core/errors';
 export * from './core/contract-payment';
+export * from './core/gasless';
 export * from './i18n';
 export { CryptoPayNodeClient } from './node/client';
 export type { ClientConfig, CreatePaymentParams, PaymentResponse as NodePaymentResponse, ListPaymentsParams, ListPaymentsResponse, QuoteResponse, RequestWithdrawalParams, WithdrawalResponse, WithdrawalStatus, RequestRefundParams, RefundResponse, RefundStatus, RequestedRefundOperation, ConfirmedRefundOperation, FailedRefundOperation, DiscriminatedRefundOperation, RequestedWithdrawalOperation, ConfirmedWithdrawalOperation, FailedWithdrawalOperation, DiscriminatedWithdrawalOperation, RefundQuoteResponse, TreasuryBalanceResponse, MerchantConfigResponse, UpdateMerchantConfigParams, ExportReconciliationParams, ExportReconciliationResponse, MerchantPaymentItemResponse, MerchantPaymentDetailResponse, } from './node/types';

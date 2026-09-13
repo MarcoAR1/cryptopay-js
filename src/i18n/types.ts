@@ -26,10 +26,15 @@ export interface TranslationCatalog {
   retry: string;
   cancel: string;
   networkLabel: string;
+  payGasless: string;
+  gaslessSponsoredBadge: string;
+  gaslessNotSupportedNotice: string;
   statusBadges: {
     initializing: string;
     awaitingPayment: string;
     walletPreparing: string;
+    sponsorSigning: string;
+    sponsorBroadcasting: string;
     confirming: string;
     confirmed: string;
     failed: string;

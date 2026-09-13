@@ -43,6 +43,7 @@ export declare class CryptoPayCheckout {
     private isDestroyed;
     private currentView;
     private latestPayment;
+    private gaslessCapabilities;
     private t;
     constructor(config: CheckoutConfig);
     /**

@@ -11,6 +11,7 @@ export * from './core/wallet-adapter';
 export * from './core/types';
 export * from './core/errors';
 export * from './core/contract-payment';
+export * from './core/gasless';
 export * from './i18n';
 export { CryptoPayNodeClient } from './node/client';
 export type {

@@ -1,3 +1,4 @@
+import { GaslessCapabilitiesResponse, GaslessPaymentRequest, GaslessPaymentResponse } from './core/gasless';
 export interface PaymentResponse {
     paymentId: string;
     amount: string;
@@ -17,4 +18,6 @@ export declare class CryptoPayAPI {
     private baseUrl;
     constructor(baseUrl: string);
     getPaymentStatus(paymentId: string, checkoutToken: string, signal?: AbortSignal): Promise<PaymentResponse>;
+    getGaslessCapabilities(paymentId: string, checkoutToken: string, signal?: AbortSignal): Promise<GaslessCapabilitiesResponse>;
+    submitGaslessPayment(paymentId: string, checkoutToken: string, request: GaslessPaymentRequest, signal?: AbortSignal): Promise<GaslessPaymentResponse>;
 }

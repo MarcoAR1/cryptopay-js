@@ -2,6 +2,8 @@ export type CheckoutState =
   | 'INITIALIZING'
   | 'AWAITING_PAYMENT'
   | 'WALLET_PREPARING'
+  | 'SPONSOR_SIGNING'
+  | 'SPONSOR_BROADCASTING'
   | 'CONFIRMING'
   | 'CONFIRMED'
   | 'FAILED'
